@@ -9,27 +9,13 @@ import os
 import pretrained_models as pre
 import utils
 
+'''
+This file contains the functions and models used during training
+'''
 
-def get_img_rec(img, M):
-    depth_model = utils.depth_model()
-    im2r = utils.projected_image(img,  M, depth_model)
-    
-    return im2r
+# Creation of convolutional residual blocks, requires specifying the number of filters f, filter size k,
+# pooling or sriding and whether to use batch normalization.
 
-def get_model_2(img_shape):
-    inputs = keras.Input(shape=img_shape)
-    output = custom_Res_2(inputs)
-    
-    if inputs.shape[0] == None:
-        imr = inputs[:,:,:,0]
-    else:
-        imr = get_img_rec(inputs[:,:,:,:3], output)
-    
-    model = tf.keras.Model(inputs=inputs, outputs=[output, imr])
-    
-    return model
-
-##################################################################################################################
 def residual_block(x, filters, k, pooling = False, striding = True, norm = False, std = False):
     residual = x
     x = layers.Conv2D(filters, k, activation= "relu", padding="same")(x)
@@ -47,6 +33,9 @@ def residual_block(x, filters, k, pooling = False, striding = True, norm = False
       x = layers.BatchNormalization()(x)
     return x
 
+#Creation of convolutional blocks by defining number of filters f, filter size k,
+# pooling or striding and normalization.
+
 def conv_block(x, filters, k, pooling = False, striding = True, norm = False):
     if norm:
       x = layers.BatchNormalization()(x) 
@@ -58,14 +47,8 @@ def conv_block(x, filters, k, pooling = False, striding = True, norm = False):
            
     return x
     
-def up_block(x, filters, k, norm = False):   
-    x = tf.keras.layers.UpSampling2D(size=(2, 2), interpolation="nearest")(x)
-    if norm:
-      x = layers.BatchNormalization()(x)
-    x = layers.Conv2D(filters, k, activation="relu", padding="same")(x)
-    
-    return x
-
+# Creation of dense layers, required to define number of neurons n, dropout d_o,
+# activation function, initializer and normalization.
 def fully_custom(x, n, d_o, activation, initializer, norm = False):
     x = layers.Dense(n, kernel_initializer=initializer)(x)
     if norm:
@@ -78,6 +61,7 @@ def fully_custom(x, n, d_o, activation, initializer, norm = False):
     return x
 
 
+# Final Model
 def custom_Res_06(img_shape):
     #depth_model = utils.depth_model()
     inputs = keras.Input(shape=img_shape)
@@ -116,8 +100,7 @@ def custom_Res_06(img_shape):
 
     last_output = 3
     
-    
-    #outputs = 0.01 * layers.Dense(last_output, kernel_initializer=initializer)(x)
+
     output_1 = 0.01 * layers.Dense(last_output, kernel_initializer=initializer)(x)
     output_2 = 0.001 * layers.Dense(last_output, kernel_initializer=initializer)(x)
     
