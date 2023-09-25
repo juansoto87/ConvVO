@@ -65,4 +65,4 @@ After training sequences 09 and 10 were pass trhough the model
 
 ![image](https://github.com/juansoto87/ConvVO/assets/70484982/304e8742-3022-44f3-85a0-ff4b5e1bbfae)
 
-
+Model avaible in https://drive.google.com/file/d/1NrPe7-8Q1djvM33x0I8Lf2zydqJjPOuS/view?usp=sharing
